@@ -3,6 +3,11 @@
 var assert = require('assert')
 var _request = require('request')
 var cheerio = require('cheerio')
+var mime = require('mime-types')
+var mkdirp = require('mkdirp')
+var _path = require('path')
+var fs = require('fs')
+var url = require('url')
 
 var request = _request.defaults({
     headers: {
@@ -13,7 +18,12 @@ var request = _request.defaults({
     jar: true,
 })
 
+var pictureUri = 'http://www.pixiv.net/member_illust.php?mode=medium&illust_id='
+
 var options = require('./options.json')
+
+var homedir = process.env.HOME || process.env.USERPROFILE
+var savedir = _path.join(homedir, 'Hamsters')
 
 function login() {
     console.log('login')
@@ -40,7 +50,8 @@ function login() {
                 console.log('looks good')
             }
             else {
-                console.log('looks bad')
+                console.error('looks bad')
+                return void reject()
             }
 
             resolve()
@@ -64,7 +75,8 @@ function checkLogin() {
                 console.log('looks good')
             }
             else {
-                console.log('looks bad')
+                console.error('looks bad: got http', res.statusCode)
+                return void reject()
             }
 
             var $ = cheerio.load(body)
@@ -87,10 +99,107 @@ function wait(seconds) {
     }
 }
 
+function download(uri, pic) {
+    console.log('download', uri)
+
+    return new Promise(function (resolve, reject) {
+        request.get({
+            uri: uri,
+            headers: {
+                'Host': url.parse(uri).hostname,
+                'Referer': pictureUri + pic,
+            },
+            encoding: null,
+        }, function (err, res, buf) {
+            assert(err === null)
+
+            if (res.statusCode == 200) {
+                console.log('looks good')
+            }
+            else {
+                console.error('looks bad: got http', res.statusCode)
+                return void reject()
+            }
+
+            var saveas = _path.join(savedir, '' + pic)
+            var contentType, extension
+
+            if (contentType = res.headers['content-type']) {
+                if (extension = mime.extension(contentType)) {
+                    if (extension == 'jpg')
+                        extension = 'jpeg'
+
+                    saveas += '.' + extension
+                }
+            }
+
+            mkdirp(savedir, function (err) {
+                assert(err === null)
+
+                fs.writeFile(saveas, buf, function (err) {
+                    assert(err === null)
+
+                    resolve()
+                })
+            })
+        })
+    })
+}
+
+function save1Picture(pic) {
+    return function () {
+        console.log('save picture', pic)
+
+        return new Promise(function (resolve, reject) {
+            request.get({
+                uri: pictureUri + pic,
+                headers: {
+                    'Host': 'www.pixiv.net',
+                },
+            }, function (err, res, body) {
+                assert(err === null)
+
+                if (res.statusCode == 200) {
+                    console.log('looks good')
+                }
+                else {
+                    console.error('looks bad: got http', res.statusCode)
+                    return void reject()
+                }
+
+                var $ = cheerio.load(body)
+                var original = $('._illust_modal [data-src]').data('src')
+                assert(original)
+
+                resolve(download(original, pic))
+            })
+        })
+    }
+}
+
+function savePictures(pictures) {
+    return function () {
+        var promise = Promise.resolve(1)
+        var tail = promise
+
+        pictures.forEach(function (pic) {
+            tail = tail
+            .then(save1Picture(pic))
+            .then(wait(2))
+        })
+
+        return promise
+    }
+}
+
 function main() {
     login()
     .then(checkLogin)
     .then(wait(2))
+    .then(savePictures(options.illust_ids))
+    .catch(function (err) {
+        console.error(err)
+    })
 }
 
 if (require.main === module) {
