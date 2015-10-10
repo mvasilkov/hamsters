@@ -8,6 +8,7 @@ var mkdirp = require('mkdirp')
 var _path = require('path')
 var fs = require('fs')
 var url = require('url')
+var lockfile = require('proper-lockfile')
 
 var request = _request.defaults({
     headers: {
@@ -24,6 +25,7 @@ var options = require('./options.json')
 
 var homedir = process.env.HOME || process.env.USERPROFILE
 var savedir = _path.join(homedir, 'Hamsters')
+var metafile = _path.join(savedir, 'Hamsters.json')
 
 function login() {
     console.log('login')
@@ -99,6 +101,60 @@ function wait(seconds) {
     }
 }
 
+function readFile(filename) {
+    console.log('read file', filename)
+
+    return new Promise(function (resolve, reject) {
+        fs.readFile(filename, {encoding: 'utf8'}, function (err, str) {
+            assert(err === null)
+
+            var res = JSON.parse(str)
+            resolve(res)
+        })
+    })
+}
+
+function writeFile(filename) {
+    return function (res) {
+        console.log('write file', filename)
+
+        return new Promise(function (resolve, reject) {
+            var str = JSON.stringify(res, null, 4) + '\n'
+
+            fs.writeFile(filename, str, {encoding: 'utf8'}, function (err) {
+                assert(err === null)
+
+                resolve()
+            })
+        })
+    }
+}
+
+function saveTags(pic, tags) {
+    console.log('tags', tags)
+
+    return new Promise(function (resolve, reject) {
+        lockfile.lock(metafile, function (err, release) {
+            assert(err === null)
+
+            readFile(metafile)
+            .then(function (res) {
+                res[pic] = {tags: tags}
+                return res
+            })
+            .then(writeFile(metafile))
+            .then(function () {
+                release()
+                resolve()
+            })
+            .catch(function (err) {
+                release()
+                reject(err)
+            })
+        })
+    })
+}
+
 function download(uri, pic) {
     console.log('download', uri)
 
@@ -171,7 +227,25 @@ function save1Picture(pic) {
                 var original = $('._illust_modal [data-src]').data('src')
                 assert(original)
 
-                resolve(download(original, pic))
+                var originalTags = $('.tags .self-tag + .text')
+                .map(function (a, b) { return $(b).text() })
+                .get()
+
+                var tags = {}
+                originalTags.forEach(function (a) {
+                    if (options.known_tags.hasOwnProperty(a)) {
+                        tags[options.known_tags[a]] = 1
+                    }
+                })
+
+                tags = Object.keys(tags).sort(function (a, b) {
+                    return a.localeCompare(b)
+                })
+
+                resolve(Promise.all([
+                    download(original, pic),
+                    saveTags(pic, tags),
+                ]))
             })
         })
     }
@@ -180,12 +254,11 @@ function save1Picture(pic) {
 function savePictures(pictures) {
     return function () {
         var promise = Promise.resolve(1)
-        var tail = promise
 
         pictures.forEach(function (pic) {
-            tail = tail
-            .then(save1Picture(pic))
+            promise = promise
             .then(wait(2))
+            .then(save1Picture(pic))
         })
 
         return promise
@@ -193,9 +266,16 @@ function savePictures(pictures) {
 }
 
 function main() {
+    process
+    .once('SIGINT', function () {
+        process.exit(1)
+    })
+    .once('SIGTERM', function () {
+        process.exit(1)
+    })
+
     login()
     .then(checkLogin)
-    .then(wait(2))
     .then(savePictures(options.illust_ids))
     .catch(function (err) {
         console.error(err)

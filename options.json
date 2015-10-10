@@ -2,6 +2,12 @@
     "username": "reinyasha",
     "password": "reinyasha1",
     "illust_ids": [
+        52697837,
         52915774
-    ]
+    ],
+    "known_tags": {
+        "VOCALOID": "Vocaloid",
+        "VOICEROID": "Vocaloid",
+        "結月ゆかり": "Yuzuki Yukari"
+    }
 }
