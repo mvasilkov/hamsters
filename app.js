@@ -130,8 +130,8 @@ function writeFile(filename) {
     }
 }
 
-function saveTags(pic, tags) {
-    console.log('tags', tags)
+function saveMeta(pic, meta) {
+    console.log('meta', meta)
 
     return new Promise(function (resolve, reject) {
         lockfile.lock(metafile, function (err, release) {
@@ -139,7 +139,7 @@ function saveTags(pic, tags) {
 
             readFile(metafile)
             .then(function (res) {
-                res[pic] = {tags: tags}
+                res[pic] = meta
                 return res
             })
             .then(writeFile(metafile))
@@ -155,7 +155,7 @@ function saveTags(pic, tags) {
     })
 }
 
-function download(uri, pic) {
+function download(uri, pic, meta) {
     console.log('download', uri)
 
     return new Promise(function (resolve, reject) {
@@ -189,13 +189,16 @@ function download(uri, pic) {
                 }
             }
 
+            assert(extension)
+            meta.picture = pic + '.' + extension
+
             mkdirp(savedir, function (err) {
                 assert(err === null)
 
                 fs.writeFile(saveas, buf, function (err) {
                     assert(err === null)
 
-                    resolve()
+                    resolve(saveMeta(pic, meta))
                 })
             })
         })
@@ -242,10 +245,7 @@ function save1Picture(pic) {
                     return a.localeCompare(b)
                 })
 
-                resolve(Promise.all([
-                    download(original, pic),
-                    saveTags(pic, tags),
-                ]))
+                resolve(download(original, pic, {tags: tags}))
             })
         })
     }
@@ -284,4 +284,8 @@ function main() {
 
 if (require.main === module) {
     main()
+}
+else {
+    module.exports.readFile = readFile
+    module.exports.writeFile = writeFile
 }
