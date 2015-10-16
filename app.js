@@ -185,6 +185,8 @@ function download(uri, pic, meta) {
                     if (extension == 'jpg')
                         extension = 'jpeg'
 
+                    assert({jpeg: 1, png: 1}.hasOwnProperty(extension))
+
                     saveas += '.' + extension
                 }
             }

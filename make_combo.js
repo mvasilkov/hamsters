@@ -6,10 +6,13 @@ var os = require('os')
 var shell = require('shelljs')
 var app = require('./app.js')
 var sharp = require('sharp')
+var util = require('util')
 
 var predir = _path.join(os.homedir(), 'Hamsters', 'pre')
 var atlasfile = _path.join(predir, 'hamsters.atlas')
-var size = '1024x1024'
+
+var options = require('./options.json')
+var size = util.format('%dx%d', options.combo_size, options.combo_size)
 
 if (!shell.which('kivy')) {
     console.error('Cannot locate kivy')

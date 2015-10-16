@@ -12,7 +12,8 @@ var savedir = _path.join(os.homedir(), 'Hamsters')
 var metafile = _path.join(savedir, 'Hamsters.json')
 var predir = _path.join(savedir, 'pre')
 
-var size = 240
+var options = require('./options.json')
+var size = options.preview_size
 
 function dirFunction(name, wrappedFunction) {
     return function () {

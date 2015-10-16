@@ -9,5 +9,7 @@
         "VOCALOID": "Vocaloid",
         "VOICEROID": "Vocaloid",
         "結月ゆかり": "Yuzuki Yukari"
-    }
+    },
+    "preview_size": 240,
+    "combo_size": 1024
 }
