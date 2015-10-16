@@ -6,6 +6,7 @@ var cheerio = require('cheerio')
 var mime = require('mime-types')
 var mkdirp = require('mkdirp')
 var _path = require('path')
+var os = require('os')
 var fs = require('fs')
 var url = require('url')
 var lockfile = require('proper-lockfile')
@@ -23,8 +24,7 @@ var pictureUri = 'http://www.pixiv.net/member_illust.php?mode=medium&illust_id='
 
 var options = require('./options.json')
 
-var homedir = process.env.HOME || process.env.USERPROFILE
-var savedir = _path.join(homedir, 'Hamsters')
+var savedir = _path.join(os.homedir(), 'Hamsters')
 var metafile = _path.join(savedir, 'Hamsters.json')
 
 function login() {

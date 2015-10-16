@@ -20,6 +20,7 @@
     "proper-lockfile": "^1.0.2",
     "request": "^2.64.0",
     "rimraf": "^2.4.3",
-    "sharp": "^0.11.3"
+    "sharp": "^0.11.3",
+    "shelljs": "^0.5.3"
   }
 }
