@@ -45,11 +45,19 @@ function generate1Preview(options) {
             (image = sharp(image))
             .metadata()
             .then(function (meta) {
+                assert(meta.height > size)
+                assert(meta.width > size)
+
                 if (meta.height > meta.width)
                     image = image.resize(null, size)
                 else
                     image = image.resize(size)
-                return image.toFile(result)
+
+                return image
+                .interpolateWith(sharp.interpolator.bicubic)
+                .flatten()
+                .background('white')
+                .toFile(result)
             })
             .then(function (meta) {
                 console.log(meta.width + ' × ' + meta.height)
