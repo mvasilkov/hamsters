@@ -4,7 +4,7 @@ var assert = require('assert')
 var _path = require('path')
 var os = require('os')
 var app = require('./app.js')
-var util = require('util')
+var _util = require('util')
 var fs = require('fs')
 
 var predir = _path.join(os.homedir(), 'Hamsters', 'pre')
@@ -33,37 +33,37 @@ function writeCss(metadata) {
     console.log('write css')
 
     return new Promise(function (resolve, reject) {
-        var css = util.format('.pc { height: %dpx; width: %dpx }\n', size, size)
+        var css = _util.format('.pc { height: %dpx; width: %dpx }\n', size, size)
         var ms, url, pics
 
         Object.keys(metadata).forEach(function (sheet) {
             assert(metadata.hasOwnProperty(sheet))
 
             ms = metadata[sheet]
-            url = util.format('url(./%s)', sheet.replace(/-/, '_'))
+            url = _util.format('url(./%s)', sheet.replace(/-/, '_'))
             ~
             (pics = Object.keys(ms)).forEach(function (pic) {
                 assert(ms.hasOwnProperty(pic))
 
-                css += util.format('.p[data-p=\'%s\'] {\n', pic)
-                css += util.format('background-position: -%dpx -%dpx;\n',
+                css += _util.format('.p[data-p=\'%s\'] {\n', pic)
+                css += _util.format('background-position: -%dpx -%dpx;\n',
                                    ms[pic][0], csize - ms[pic][1] - ms[pic][3])
-                css += util.format('height: %dpx;\n', ms[pic][3])
-                css += util.format('width: %dpx;\n', ms[pic][2])
+                css += _util.format('height: %dpx;\n', ms[pic][3])
+                css += _util.format('width: %dpx;\n', ms[pic][2])
 
                 if (ms[pic][2] < size) {
-                    css += util.format('left: %dpx;\n', 0.5 * (size - ms[pic][2]))
+                    css += _util.format('left: %dpx;\n', 0.5 * (size - ms[pic][2]))
                 }
                 if (ms[pic][3] < size) {
-                    css += util.format('top: %dpx;\n', 0.5 * (size - ms[pic][3]))
+                    css += _util.format('top: %dpx;\n', 0.5 * (size - ms[pic][3]))
                 }
 
                 css += '}\n'
             })
 
-            pics = pics.map(function (x) { return util.format('.p[data-p=\'%s\']', x) })
+            pics = pics.map(function (x) { return _util.format('.p[data-p=\'%s\']', x) })
 
-            css += util.format('%s { background-image: %s }\n', pics, url)
+            css += _util.format('%s { background-image: %s }\n', pics, url)
         })
 
         resolve(css)

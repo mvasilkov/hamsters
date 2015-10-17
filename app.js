@@ -10,6 +10,8 @@ var os = require('os')
 var fs = require('fs')
 var url = require('url')
 var lockfile = require('proper-lockfile')
+var shell = require('shelljs')
+var util = require('./util.js')
 
 var request = _request.defaults({
     headers: {
@@ -24,8 +26,8 @@ var pictureUri = 'http://www.pixiv.net/member_illust.php?mode=medium&illust_id='
 
 var options = require('./options.json')
 
-var savedir = _path.join(os.homedir(), 'Hamsters')
-var metafile = _path.join(savedir, 'Hamsters.json')
+var savedir = util.savedir
+var metafile = util.metafile
 
 function login() {
     console.log('login')
@@ -155,6 +157,27 @@ function saveMeta(pic, meta) {
     })
 }
 
+function shasum(picture) {
+    return function () {
+        console.log('shasum', picture)
+
+        return new Promise(function (resolve, reject) {
+            var path = _path.join(savedir, picture)
+            var checksumfile = _path.join(savedir, 'checksumfile')
+
+            shell.exec('shasum ' + path, {silent: true}, function (code, output) {
+                if (code !== 0) {
+                    console.error('Errorlevel', code)
+                    shell.exit(code)
+                }
+
+                output.toEnd(checksumfile)
+                resolve()
+            })
+        })
+    }
+}
+
 function download(uri, pic, meta) {
     console.log('download', uri)
 
@@ -185,14 +208,14 @@ function download(uri, pic, meta) {
                     if (extension == 'jpg')
                         extension = 'jpeg'
 
-                    assert({jpeg: 1, png: 1}.hasOwnProperty(extension))
-
                     saveas += '.' + extension
                 }
             }
 
-            assert(extension)
+            assert(extension && {jpeg: 1, png: 1}.hasOwnProperty(extension))
+
             meta.picture = pic + '.' + extension
+            meta.unixtime = Date.now()
 
             mkdirp(savedir, function (err) {
                 assert(err === null)
@@ -200,7 +223,7 @@ function download(uri, pic, meta) {
                 fs.writeFile(saveas, buf, function (err) {
                     assert(err === null)
 
-                    resolve(saveMeta(pic, meta))
+                    resolve(saveMeta(pic, meta).then(shasum(meta.picture)))
                 })
             })
         })
@@ -209,7 +232,7 @@ function download(uri, pic, meta) {
 
 function save1Picture(pic) {
     return function () {
-        console.log('save picture', pic)
+        console.log('save picture', pictureUri + pic)
 
         return new Promise(function (resolve, reject) {
             request.get({
@@ -218,6 +241,9 @@ function save1Picture(pic) {
                     'Host': 'www.pixiv.net',
                 },
             }, function (err, res, body) {
+                if (err)
+                    console.error(err)
+
                 assert(err === null)
 
                 if (res.statusCode == 200) {
@@ -255,15 +281,23 @@ function save1Picture(pic) {
 
 function savePictures(pictures) {
     return function () {
-        var promise = Promise.resolve(1)
+        return readFile(metafile)
+        .then(function (metadata) {
+            var promise = Promise.resolve(1)
 
-        pictures.forEach(function (pic) {
-            promise = promise
-            .then(wait(2))
-            .then(save1Picture(pic))
+            pictures.forEach(function (pic) {
+                if (metadata.hasOwnProperty(pic)) {
+                    console.log('have pic', pic, '(skipping)')
+                    return
+                }
+
+                promise = promise
+                .then(wait(2))
+                .then(save1Picture(pic))
+            })
+
+            return promise
         })
-
-        return promise
     }
 }
 

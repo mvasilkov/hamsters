@@ -7,9 +7,10 @@ var app = require('./app.js')
 var app2 = require('./make_css.js')
 var nunjucks = require('nunjucks')
 var mkdirp = require('mkdirp')
+var util = require('./util.js')
 
-var savedir = _path.join(os.homedir(), 'Hamsters')
-var metafile = _path.join(savedir, 'Hamsters.json')
+var savedir = util.savedir
+var metafile = util.metafile
 
 function writeIndex(metadata) {
     return new Promise(function (resolve, reject) {

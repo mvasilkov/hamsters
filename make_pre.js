@@ -7,10 +7,11 @@ var rimraf = require('rimraf')
 var mkdirp = require('mkdirp')
 var app = require('./app.js')
 var sharp = require('sharp')
+var util = require('./util.js')
 
-var savedir = _path.join(os.homedir(), 'Hamsters')
-var metafile = _path.join(savedir, 'Hamsters.json')
-var predir = _path.join(savedir, 'pre')
+var savedir = util.savedir
+var metafile = util.metafile
+var predir = util.predir
 
 var options = require('./options.json')
 var size = options.preview_size
