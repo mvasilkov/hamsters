@@ -1,0 +1,11 @@
+.pc {
+    float: left;
+    margin: 10px;
+    position: relative;
+}
+
+.p {
+    left: 0;
+    position: absolute;
+    top: 0;
+}

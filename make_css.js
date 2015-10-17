@@ -45,8 +45,9 @@ function writeCss(metadata) {
             (pics = Object.keys(ms)).forEach(function (pic) {
                 assert(ms.hasOwnProperty(pic))
 
-                css += util.format('.p[data-p=%s] {\n', pic)
-                css += util.format('background-position: -%dpx -%dpx;\n', ms[pic][0], csize - ms[pic][1])
+                css += util.format('.p[data-p=\'%s\'] {\n', pic)
+                css += util.format('background-position: -%dpx -%dpx;\n',
+                                   ms[pic][0], csize - ms[pic][1] - ms[pic][3])
                 css += util.format('height: %dpx;\n', ms[pic][3])
                 css += util.format('width: %dpx;\n', ms[pic][2])
 
@@ -60,7 +61,7 @@ function writeCss(metadata) {
                 css += '}\n'
             })
 
-            pics = pics.map(function (x) { return util.format('.p[data-p=%s]', x) })
+            pics = pics.map(function (x) { return util.format('.p[data-p=\'%s\']', x) })
 
             css += util.format('%s { background-image: %s }\n', pics, url)
         })
