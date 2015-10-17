@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset=utf8>
+        <title>Hamsters</title>
+        <link rel=stylesheet href=app.css>
+        <link rel=stylesheet href=hamsters.css>
+    </head>
+    <body>
+        <div class=container>
+            {% for pic in pics %}
+            <div class=pc>
+                <div class=p data-p='{{ pic }}'></div>
+            </div>
+            {% endfor %}
+        </div>
+    </body>
+</html>
