@@ -4,36 +4,67 @@ var assert = require('assert')
 var _path = require('path')
 var os = require('os')
 var app = require('./app.js')
-var app2 = require('./make_css.js')
 var nunjucks = require('nunjucks')
 var mkdirp = require('mkdirp')
+var fs = require('fs')
 var util = require('./util.js')
 
 var savedir = util.savedir
 var metafile = util.metafile
+var pagesize = 9
 
-function writeIndex(metadata) {
-    return new Promise(function (resolve, reject) {
-        var html = nunjucks.render('index.html', {pics: Object.keys(metadata)})
-        resolve(html)
-    })
+function pageFile(n) {
+    return n? 'index_' + n + '.html': 'index.html'
+}
+
+function writePages(htdocs) {
+    return function (metadata) {
+        var pictures = []
+        var pages = []
+
+        Object.keys(metadata).forEach(function (pic) {
+            assert(metadata.hasOwnProperty(pic))
+
+            var picture = metadata[pic]
+            picture._id = pic
+            pictures.push(picture)
+        })
+
+        pictures.sort(function (a, b) {
+            return b.unixtime - a.unixtime
+        })
+
+        while (pictures.length) {
+            pages.push(pictures.splice(0, pagesize))
+        }
+
+        pages.forEach(function (pictures, n) {
+            var html = nunjucks.render('index.html', {
+                pics: pictures.map(function (x) { return x._id }),
+                prevPage: n? pageFile(n - 1): null,
+                nextPage: n < pages.length - 1? pageFile(n + 1): null,
+            })
+            var name = pageFile(n)
+            name = _path.join(htdocs, name)
+            console.log('writing', name)
+            fs.writeFileSync(name, html, {encoding: 'utf8'})
+        })
+
+        return Promise.resolve(1)
+    }
 }
 
 function main() {
-    nunjucks.configure('template', { autoescape: true })
+    nunjucks.configure('template', {autoescape: true})
 
     var htdocs = _path.join(__dirname, 'htdocs')
-    var index = _path.join(htdocs, 'index.html')
 
     mkdirp(htdocs, function (err) {
         assert(err === null)
 
         app.readFile(metafile)
-        .then(writeIndex)
-        .then(app2.writeFile(index))
-        .catch(function (err) {
-            console.error(err)
-        })
+        .then(writePages(htdocs))
+        .catch(function (err) { console.error(err) })
     })
 }
 

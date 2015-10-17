@@ -13,6 +13,14 @@
                 <div class=p data-p='{{ pic }}'></div>
             </div>
             {% endfor %}
+
+            {% if prevPage %}
+            <a href='./{{ prevPage }}'>Previous page</a>
+            {% endif %}
+
+            {% if nextPage %}
+            <a href='./{{ nextPage }}'>Next page</a>
+            {% endif %}
         </div>
     </body>
 </html>
