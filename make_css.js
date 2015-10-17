@@ -6,34 +6,26 @@ var os = require('os')
 var app = require('./app.js')
 var _util = require('util')
 var fs = require('fs')
+var util = require('./util.js')
 
-var predir = _path.join(os.homedir(), 'Hamsters', 'pre')
-var atlasfile = _path.join(predir, 'hamsters.atlas')
-var cssfile = _path.join(predir, 'hamsters.css')
+var predir = util.predir
+var atlasfile = util.atlasfile
+var cssfile = util.cssfile
 
 var options = require('./options.json')
 var size = options.preview_size
 var csize = options.combo_size
 
-function writeFile(filename) {
-    return function (str) {
-        console.log('write file', filename)
-
-        return new Promise(function (resolve, reject) {
-            fs.writeFile(filename, str, {encoding: 'utf8'}, function (err) {
-                assert(err === null)
-
-                resolve()
-            })
-        })
-    }
-}
-
 function writeCss(metadata) {
     console.log('write css')
 
     return new Promise(function (resolve, reject) {
-        var css = _util.format('.pc { height: %dpx; width: %dpx }\n', size, size)
+        var css = {
+            basic: _util.format('.pc { height: %dpx; width: %dpx }\n', size, size),
+            pictures: {},
+            backgrounds: {},
+        }
+
         var ms, url, pics
 
         Object.keys(metadata).forEach(function (sheet) {
@@ -45,25 +37,30 @@ function writeCss(metadata) {
             (pics = Object.keys(ms)).forEach(function (pic) {
                 assert(ms.hasOwnProperty(pic))
 
-                css += _util.format('.p[data-p=\'%s\'] {\n', pic)
-                css += _util.format('background-position: -%dpx -%dpx;\n',
-                                   ms[pic][0], csize - ms[pic][1] - ms[pic][3])
-                css += _util.format('height: %dpx;\n', ms[pic][3])
-                css += _util.format('width: %dpx;\n', ms[pic][2])
+                var a = _util.format('.p[data-p=\'%s\'] {\n', pic)
+                a += _util.format('background-position: -%dpx -%dpx;\n',
+                                  ms[pic][0], csize - ms[pic][1] - ms[pic][3])
+                a += _util.format('height: %dpx;\n', ms[pic][3])
+                a += _util.format('width: %dpx;\n', ms[pic][2])
 
                 if (ms[pic][2] < size) {
-                    css += _util.format('left: %dpx;\n', 0.5 * (size - ms[pic][2]))
+                    a += _util.format('left: %dpx;\n', 0.5 * (size - ms[pic][2]))
                 }
                 if (ms[pic][3] < size) {
-                    css += _util.format('top: %dpx;\n', 0.5 * (size - ms[pic][3]))
+                    a += _util.format('top: %dpx;\n', 0.5 * (size - ms[pic][3]))
                 }
 
-                css += '}\n'
+                a += '}\n'
+
+                css.pictures[pic] = a
             })
 
-            pics = pics.map(function (x) { return _util.format('.p[data-p=\'%s\']', x) })
+            var classes = pics.map(function (x) { return _util.format('.p[data-p=\'%s\']', x) })
+            var b = _util.format('%s { background-image: %s }\n', classes, url)
 
-            css += _util.format('%s { background-image: %s }\n', pics, url)
+            pics.forEach(function (pic) {
+                css.backgrounds[pic] = b
+            })
         })
 
         resolve(css)
@@ -73,7 +70,7 @@ function writeCss(metadata) {
 function main() {
     app.readFile(atlasfile)
     .then(writeCss)
-    .then(writeFile(cssfile))
+    .then(app.writeFile(cssfile))
     .catch(function (err) {
         console.error(err)
     })
@@ -81,7 +78,4 @@ function main() {
 
 if (require.main === module) {
     main()
-}
-else {
-    module.exports.writeFile = writeFile
 }

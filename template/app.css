@@ -1,3 +1,9 @@
+.container::after {
+    clear: both;
+    content: '';
+    display: table;
+}
+
 .pc {
     float: left;
     margin: 10px;

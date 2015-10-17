@@ -3,8 +3,8 @@
     <head>
         <meta charset=utf8>
         <title>Hamsters</title>
-        <link rel=stylesheet href=app.css>
-        <link rel=stylesheet href=hamsters.css>
+        <link rel=stylesheet href='./app.css'>
+        <link rel=stylesheet href='./{{ css }}'>
     </head>
     <body>
         <div class=container>
@@ -13,14 +13,14 @@
                 <div class=p data-p='{{ pic }}'></div>
             </div>
             {% endfor %}
-
-            {% if prevPage %}
-            <a href='./{{ prevPage }}'>Previous page</a>
-            {% endif %}
-
-            {% if nextPage %}
-            <a href='./{{ nextPage }}'>Next page</a>
-            {% endif %}
         </div>
+
+        {% if prevPage %}
+        <a href='./{{ prevPage }}'>Previous page</a>
+        {% endif %}
+
+        {% if nextPage %}
+        <a href='./{{ nextPage }}'>Next page</a>
+        {% endif %}
     </body>
 </html>
