@@ -1,10 +1,8 @@
 htdocs:
 	./make_pre.js
-	./make_combo.js
-	./make_css.js
+	./make_links.sh
 	./make_html.js
-	cp template/app.css htdocs
-	mv ~/Hamsters/pre/hamsters_*.png htdocs
+	ln -f template/app.css htdocs
 	touch htdocs
 
 clean:

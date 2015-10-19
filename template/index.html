@@ -4,23 +4,20 @@
         <meta charset=utf8>
         <title>Hamsters</title>
         <link rel=stylesheet href='./app.css'>
-        <link rel=stylesheet href='./{{ css }}'>
     </head>
     <body>
         <div class=container>
             {% for pic in pics %}
-            <div class=pc>
-                <div class=p data-p='{{ pic }}'></div>
-            </div>
+            <div class=pic style='background-image:url(./media/pre/{{ pic }}.png)'></div>
             {% endfor %}
         </div>
 
         {% if prevPage %}
-        <a href='./{{ prevPage }}'>Previous page</a>
+        <a href='./{{ prevPage }}' class=nav><i class='icon-dir icon-prev'></i></a>
         {% endif %}
 
         {% if nextPage %}
-        <a href='./{{ nextPage }}'>Next page</a>
+        <a href='./{{ nextPage }}' class=nav><i class='icon-dir icon-next'></i></a>
         {% endif %}
     </body>
 </html>

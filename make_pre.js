@@ -18,7 +18,7 @@ var size = options.preview_size
 
 function dirFunction(name, wrappedFunction) {
     return function () {
-        console.log(name)
+        console.log(name, predir)
 
         return new Promise(function (resolve, reject) {
             wrappedFunction(predir, function (err) {

@@ -4,14 +4,65 @@
     display: table;
 }
 
-.pc {
+.pic {
+    background-position: center;
+    background-repeat: no-repeat;
     float: left;
+    height: 240px;
     margin: 10px;
+    width: 240px;
+}
+
+a.nav {
+    background: white;
+    display: block;
+    float: left;
+    height: 64px;
+    margin: 10px;
+    padding: 0 16px;
+    position: relative;
+    width: 64px;
+}
+
+i {
+    display: inline-block;
     position: relative;
 }
 
-.p {
-    left: 0;
+i::after, i::before {
+    box-sizing: border-box;
+    content: '';
     position: absolute;
-    top: 0;
+}
+
+.icon-dir {
+    background: #FF2A68;
+    height: 2px;
+    margin-top: -1px;
+    position: absolute;
+    top: 50%;
+    width: 64px;
+}
+
+.icon-dir::after {
+    border: 2px solid #FF2A68;
+    bottom: 1px;
+    height: 25px;
+    width: 25px;
+}
+
+.icon-prev::after {
+    border-right: none;
+    border-top: none;
+    left: -1px;
+    transform: rotate(50grad);
+    transform-origin: 0 100%;
+}
+
+.icon-next::after {
+    border-left: none;
+    border-top: none;
+    right: -1px;
+    transform: rotate(-50grad);
+    transform-origin: 100% 100%;
 }
