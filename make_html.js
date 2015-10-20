@@ -3,11 +3,14 @@
 var assert = require('assert')
 var _path = require('path')
 var os = require('os')
-var app = require('./app.js')
 var nunjucks = require('nunjucks')
 var mkdirp = require('mkdirp')
 var fs = require('fs')
+var app = require('./app.js')
 var util = require('./util.js')
+
+delete Object.prototype.hasOwnPropertyCI
+delete Object.prototype.getCI
 
 var savedir = util.savedir
 var metafile = util.metafile

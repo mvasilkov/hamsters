@@ -18,8 +18,7 @@ a.nav {
     display: block;
     float: left;
     height: 64px;
-    margin: 10px;
-    padding: 0 16px;
+    padding: 10px 20px;
     position: relative;
     width: 64px;
 }
@@ -36,7 +35,7 @@ i::after, i::before {
 }
 
 .icon-dir {
-    background: #FF2A68;
+    background: black;
     height: 2px;
     margin-top: -1px;
     position: absolute;
@@ -45,7 +44,7 @@ i::after, i::before {
 }
 
 .icon-dir::after {
-    border: 2px solid #FF2A68;
+    border: 2px solid black;
     bottom: 1px;
     height: 25px;
     width: 25px;
@@ -65,4 +64,21 @@ i::after, i::before {
     right: -1px;
     transform: rotate(-50grad);
     transform-origin: 100% 100%;
+}
+
+.container.navigation {
+    position: relative;
+}
+
+.container.navigation svg {
+    height: 84px;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    width: 208px;
+}
+
+.container.navigation .filter {
+    mix-blend-mode: screen;
 }

@@ -12,12 +12,22 @@
             {% endfor %}
         </div>
 
-        {% if prevPage %}
-        <a href='./{{ prevPage }}' class=nav><i class='icon-dir icon-prev'></i></a>
-        {% endif %}
+        <div class='container navigation'>
+            {% if prevPage %}
+            <a href='./{{ prevPage }}' class=nav><i class='icon-dir icon-prev'></i></a>
+            {% endif %}
 
-        {% if nextPage %}
-        <a href='./{{ nextPage }}' class=nav><i class='icon-dir icon-next'></i></a>
-        {% endif %}
+            {% if nextPage %}
+            <a href='./{{ nextPage }}' class=nav><i class='icon-dir icon-next'></i></a>
+            {% endif %}
+
+            <svg>
+                <linearGradient id=nav-gradient>
+                    <stop stop-color='#ff2a68' offset='0%' />
+                    <stop stop-color='#c643fb' offset='100%' />
+                </linearGradient>
+                <rect class=filter fill='url(#nav-gradient)' height='100%' width='100%' />
+            </svg>
+        </div>
     </body>
 </html>
