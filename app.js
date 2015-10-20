@@ -93,6 +93,25 @@ function checkLogin() {
     })
 }
 
+function initialize() {
+    console.log('initialize')
+
+    return new Promise(function (resolve, reject) {
+        mkdirp(savedir, function (err) {
+            assert(err === null)
+
+            if (util.isFile(metafile))
+                return void resolve()
+
+            fs.writeFile(metafile, '{}', {encoding: 'utf8'}, function (err) {
+                assert(err === null)
+
+                resolve()
+            })
+        })
+    })
+}
+
 function wait(seconds) {
     return function () {
         console.log('waiting for', seconds, 'seconds')
@@ -312,6 +331,7 @@ function main() {
 
     login()
     .then(checkLogin)
+    .then(initialize)
     .then(savePictures(options.illust_ids))
     .catch(function (err) {
         console.error(err)
