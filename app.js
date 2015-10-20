@@ -277,14 +277,22 @@ function save1Picture(pic) {
                 var original = $('._illust_modal [data-src]').data('src')
                 assert(original)
 
-                var originalTags = $('.tags .self-tag + .text')
+                var user = {}
+                var memberUri = $('h1.user').parent('a').attr('href')
+                assert(memberUri)
+                user._id = url.parse(memberUri, true).query.id
+                user.name = $('h1.user').text()
+                assert(user._id)
+                assert(user.name)
+
+                var originalTags = $('.work-tags .tags .tag a.text')
                 .map(function (a, b) { return $(b).text() })
                 .get()
 
                 var tags = {}
                 originalTags.forEach(function (a) {
-                    if (options.known_tags.hasOwnProperty(a)) {
-                        tags[options.known_tags[a]] = 1
+                    if (options.known_tags.hasOwnPropertyCI(a)) {
+                        tags[options.known_tags.getCI(a)] = 1
                     }
                 })
 
@@ -292,7 +300,7 @@ function save1Picture(pic) {
                     return a.localeCompare(b)
                 })
 
-                resolve(download(original, pic, {tags: tags}))
+                resolve(download(original, pic, {tags: tags, user: user}))
             })
         })
     }

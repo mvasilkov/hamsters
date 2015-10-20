@@ -19,3 +19,22 @@ module.exports.predir = predir
 
 module.exports.isDir = isFn('isDirectory')
 module.exports.isFile = isFn('isFile')
+
+Object.prototype.hasOwnPropertyCI = function (a) {
+    a = a.toUpperCase()
+    return Object.keys(this).some(function (b) {
+        return a === b.toUpperCase()
+    })
+}
+
+Object.prototype.getCI = function (a) {
+    var value
+
+    a = a.toUpperCase()
+    Object.keys(this).some(function (b) {
+        if (a === b.toUpperCase())
+            return (value = this[b]), true
+    }.bind(this))
+
+    return value
+}
