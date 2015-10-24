@@ -2,12 +2,14 @@
 set -e
 mkdir -p htdocs/media/{pic,pre}
 
-for pic in `ls ~/Hamsters/*.{jpeg,png}`
+for pic in `find ~/Hamsters -depth 1 -type d -regex '.*[0-9]'`
 do
-    ln -f $pic htdocs/media/pic/
+    echo 'linking' $pic
+    ln -v -f -s $pic htdocs/media/pic
 done
 
-for pre in `ls ~/Hamsters/pre/*.png`
+for pre in `find ~/Hamsters/pre -depth 1 -type d -regex '.*[0-9]'`
 do
-    ln -f $pre htdocs/media/pre/
+    echo 'linking' $pre
+    ln -v -f -s $pre htdocs/media/pre
 done

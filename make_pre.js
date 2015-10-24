@@ -12,7 +12,6 @@ var util = require('./util.js')
 delete Object.prototype.hasOwnPropertyCI
 delete Object.prototype.getCI
 
-var savedir = util.savedir
 var metafile = util.metafile
 var predir = util.predir
 
@@ -36,6 +35,20 @@ function dirFunction(name, wrappedFunction) {
 var rmdir = dirFunction('rmdir', rimraf)
 var mkdir = dirFunction('mkdir', mkdirp)
 
+function mkdirpassthrough(dir) {
+    return function (passthrough) {
+        console.log('mkdir', dir)
+
+        return new Promise(function (resolve, reject) {
+            mkdirp(dir, function (err) {
+                assert(err === null)
+
+                resolve(passthrough)
+            })
+        })
+    }
+}
+
 function generate1Preview(options) {
     var picture
     assert(picture = options.picture)
@@ -43,12 +56,16 @@ function generate1Preview(options) {
     return function () {
         console.log('generate preview', picture)
 
-        var image = _path.join(savedir, picture)
-        var result = _path.join(predir, _path.parse(picture).name + '.png')
+        var image = _path.join(util.bsavedir(picture), picture)
+        var result = _path.parse(picture).name + '.png'
+        var dir = util.bpredir(result)
+
+        result = _path.join(dir, result)
 
         return new Promise(function (resolve, reject) {
             (image = sharp(image))
             .metadata()
+            .then(mkdirpassthrough(dir))
             .then(function (meta) {
                 assert(meta.height > size)
                 assert(meta.width > size)
