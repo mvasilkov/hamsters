@@ -20,6 +20,12 @@ function pageFile(n) {
     return n? 'index_' + n + '.html': 'index.html'
 }
 
+function htmlpreview(pic) {
+    var name = pic._id + '.png'
+    var dir = util.bnodir(name)
+    return './media/pre/' + dir + '/' + name
+}
+
 function writePages(htdocs) {
     return function (metadata) {
         var pictures = []
@@ -43,7 +49,7 @@ function writePages(htdocs) {
 
         pages.forEach(function (pictures, n) {
             var html = nunjucks.render('index.html', {
-                pics: pictures.map(function (x) { return x._id }),
+                pics: pictures.map(htmlpreview),
                 prevPage: n? pageFile(n - 1): null,
                 nextPage: n < pages.length - 1? pageFile(n + 1): null,
             })

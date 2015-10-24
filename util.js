@@ -34,6 +34,7 @@ module.exports.isFile = isFn('isFile')
 
 module.exports.bsavedir = bucketPath(savedir)
 module.exports.bpredir = bucketPath(predir)
+module.exports.bnodir = bucketPath('')
 
 Object.prototype.hasOwnPropertyCI = function (a) {
     a = a.toUpperCase()

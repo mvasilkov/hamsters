@@ -8,7 +8,7 @@
     <body>
         <div class=container>
             {% for pic in pics %}
-            <div class=pic style='background-image:url(./media/pre/{{ pic }}.png)'></div>
+            <div class=pic style='background-image:url({{ pic }})'></div>
             {% endfor %}
         </div>
 
