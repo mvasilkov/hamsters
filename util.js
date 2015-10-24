@@ -1,6 +1,9 @@
+var assert = require('assert')
 var _path = require('path')
 var os = require('os')
 var fs = require('fs')
+var murmurhash3 = require('murmurhash3')
+var options = require('./options.json')
 
 var savedir = _path.join(os.homedir(), 'Hamsters')
 var metafile = _path.join(savedir, 'hamsters.json')
@@ -13,12 +16,24 @@ function isFn(method) {
     }
 }
 
+function bucketPath(path) {
+    assert(typeof options.buckets == 'number' && options.buckets)
+
+    return function (name) {
+        var x = murmurhash3.murmur32Sync(name, 96)
+        return _path.join(path, '' + x % options.buckets)
+    }
+}
+
 module.exports.savedir = savedir
 module.exports.metafile = metafile
 module.exports.predir = predir
 
 module.exports.isDir = isFn('isDirectory')
 module.exports.isFile = isFn('isFile')
+
+module.exports.bsavedir = bucketPath(savedir)
+module.exports.bpredir = bucketPath(predir)
 
 Object.prototype.hasOwnPropertyCI = function (a) {
     a = a.toUpperCase()

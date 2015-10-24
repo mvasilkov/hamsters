@@ -181,10 +181,9 @@ function shasum(picture) {
         console.log('shasum', picture)
 
         return new Promise(function (resolve, reject) {
-            var path = _path.join(savedir, picture)
             var checksumfile = _path.join(savedir, 'checksumfile')
 
-            shell.exec('shasum ' + path, {silent: true}, function (code, output) {
+            shell.exec('shasum ' + picture, {silent: true}, function (code, output) {
                 if (code !== 0) {
                     console.error('Errorlevel', code)
                     shell.exit(code)
@@ -219,7 +218,7 @@ function download(uri, pic, meta) {
                 return void reject()
             }
 
-            var saveas = _path.join(savedir, '' + pic)
+            var saveas = '' + pic
             var contentType, extension
 
             if (contentType = res.headers['content-type']) {
@@ -233,16 +232,19 @@ function download(uri, pic, meta) {
 
             assert(extension && {jpeg: 1, png: 1}.hasOwnProperty(extension))
 
-            meta.picture = pic + '.' + extension
+            meta.picture = saveas
             meta.unixtime = Date.now()
 
-            mkdirp(savedir, function (err) {
+            var dir = util.bsavedir(saveas)
+            saveas = _path.join(dir, saveas)
+
+            mkdirp(dir, function (err) {
                 assert(err === null)
 
                 fs.writeFile(saveas, buf, function (err) {
                     assert(err === null)
 
-                    resolve(saveMeta(pic, meta).then(shasum(meta.picture)))
+                    resolve(saveMeta(pic, meta).then(shasum(saveas)))
                 })
             })
         })
