@@ -176,6 +176,28 @@ function saveMeta(pic, meta) {
     })
 }
 
+function optimize(picture) {
+    return function () {
+        console.log('optimize', picture)
+
+        return new Promise(function (resolve, reject) {
+            if (!picture.endsWith('.png')) {
+                console.log('cannot optimize')
+                return void resolve()
+            }
+
+            shell.exec('./bin/pngout-20150920 ' + picture, function (code) {
+                if (code !== 0) {
+                    console.error('Errorlevel', code)
+                    shell.exit(code)
+                }
+
+                resolve()
+            })
+        })
+    }
+}
+
 function shasum(picture) {
     return function () {
         console.log('shasum', picture)
@@ -244,7 +266,7 @@ function download(uri, pic, meta) {
                 fs.writeFile(saveas, buf, function (err) {
                     assert(err === null)
 
-                    resolve(saveMeta(pic, meta).then(shasum(saveas)))
+                    resolve(saveMeta(pic, meta).then(optimize(saveas)).then(shasum(saveas)))
                 })
             })
         })
