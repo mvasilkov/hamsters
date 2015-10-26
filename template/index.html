@@ -6,6 +6,8 @@
         <link rel=stylesheet href='./app.css'>
     </head>
     <body>
+        {% block before_container %}{% endblock %}
+
         <div class=container>
             {% for pic in pics %}
             <div class=pic style='background-image:url({{ pic }})'></div>
@@ -21,7 +23,13 @@
             <a href='./{{ nextPage }}' class=nav><i class='icon-dir icon-next'></i></a>
             {% endif %}
 
+            {% if not prevPage %}
             <span class=nav></span>
+            {% endif %}
+
+            {% if not nextPage %}
+            <span class=nav></span>
+            {% endif %}
 
             <svg>
                 <linearGradient id=nav-gradient>

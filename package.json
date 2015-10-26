@@ -19,6 +19,7 @@
     "mkdirp": "^0.5.1",
     "murmurhash3": "^0.3.4",
     "nunjucks": "^2.1.0",
+    "permalink": "0.0.3",
     "proper-lockfile": "^1.0.2",
     "request": "^2.65.0",
     "rimraf": "^2.4.3",
