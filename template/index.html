@@ -3,41 +3,52 @@
     <head>
         <meta charset=utf8>
         <title>Hamsters</title>
+        <link rel=stylesheet href='//fonts.googleapis.com/css?family=Roboto:300,400'>
         <link rel=stylesheet href='./app.css'>
     </head>
     <body>
-        {% block before_container %}{% endblock %}
-
-        <div class=container>
-            {% for pic in pics %}
-            <div class=pic style='background-image:url({{ pic }})'></div>
-            {% endfor %}
+        <div class=column2>
+            <ul class=tags>
+                {% for tag in options.tags %}
+                <li><a href='./{{ tag.uri }}'>{{ tag.name }}</a></li>
+                {% endfor %}
+            </ul>
         </div>
 
-        <div class='container navigation'>
-            {% if prevPage %}
-            <a href='./{{ prevPage }}' class=nav><i class='icon-dir icon-prev'></i></a>
-            {% endif %}
+        <div class=column1>
+            {% block before_container %}{% endblock %}
 
-            {% if nextPage %}
-            <a href='./{{ nextPage }}' class=nav><i class='icon-dir icon-next'></i></a>
-            {% endif %}
+            <div class=container>
+                {% for pic in pics %}
+                <div class=pic style='background-image:url({{ pic }})'></div>
+                {% endfor %}
+            </div>
 
-            {% if not prevPage %}
-            <span class=nav></span>
-            {% endif %}
+            <div class='container navigation'>
+                {% if prevPage %}
+                <a href='./{{ prevPage }}' class=nav><i class='icon-dir icon-prev'></i></a>
+                {% endif %}
 
-            {% if not nextPage %}
-            <span class=nav></span>
-            {% endif %}
+                {% if nextPage %}
+                <a href='./{{ nextPage }}' class=nav><i class='icon-dir icon-next'></i></a>
+                {% endif %}
 
-            <svg>
-                <linearGradient id=nav-gradient>
-                    <stop stop-color='#ff2a68' offset='0%' />
-                    <stop stop-color='#c643fb' offset='100%' />
-                </linearGradient>
-                <rect class=filter fill='url(#nav-gradient)' height='100%' width='100%' />
-            </svg>
+                {% if not prevPage %}
+                <span class=nav></span>
+                {% endif %}
+
+                {% if not nextPage %}
+                <span class=nav></span>
+                {% endif %}
+
+                <svg>
+                    <linearGradient id=nav-gradient>
+                        <stop stop-color='#ff2a68' offset='0%' />
+                        <stop stop-color='#c643fb' offset='100%' />
+                    </linearGradient>
+                    <rect class=filter fill='url(#nav-gradient)' height='100%' width='100%' />
+                </svg>
+            </div>
         </div>
     </body>
 </html>

@@ -88,9 +88,12 @@ function writePages() {
             return b.unixtime - a.unixtime
         })
 
-        _writePages(pictures, 'index.html', null, pageFile)
-
         var indexTags = buildIndexTags(metadata)
+        var tags = Object.keys(indexTags).map(function (name) {
+            return {name: name, uri: permalink(name, '_') + '.html'}
+        })
+
+        _writePages(pictures, 'index.html', {tags: tags}, pageFile)
 
         Object.keys(indexTags).forEach(function (name) {
             assert(indexTags.hasOwnProperty(name))
@@ -101,7 +104,7 @@ function writePages() {
                 return b.unixtime - a.unixtime
             })
 
-            _writePages(pictures, 'index_tag.html', {name: name},
+            _writePages(pictures, 'index_tag.html', {name: name, tags: tags},
                         pageFileTag.bind(null, name))
         })
 
