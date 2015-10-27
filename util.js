@@ -5,9 +5,9 @@ var fs = require('fs')
 var murmurhash3 = require('murmurhash3')
 var options = require('./options.json')
 
-var savedir = _path.join(os.homedir(), 'Hamsters')
-var metafile = _path.join(savedir, 'hamsters.json')
-var predir = _path.join(savedir, 'pre')
+var savedir = _path.join(os.homedir(), 'Hamsters', 'pic')
+var metafile = _path.join(savedir, '..', 'hamsters.json')
+var predir = _path.join(savedir, '..', 'pre')
 
 function isFn(method) {
     return function (path) {

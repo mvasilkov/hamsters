@@ -203,7 +203,7 @@ function shasum(picture) {
         console.log('shasum', picture)
 
         return new Promise(function (resolve, reject) {
-            var checksumfile = _path.join(savedir, 'checksumfile')
+            var checksumfile = _path.join(savedir, '..', 'checksumfile')
 
             shell.exec('shasum ' + picture, {silent: true}, function (code, output) {
                 if (code !== 0) {
@@ -266,7 +266,13 @@ function download(uri, pic, meta) {
                 fs.writeFile(saveas, buf, function (err) {
                     assert(err === null)
 
-                    resolve(saveMeta(pic, meta).then(optimize(saveas)).then(shasum(saveas)))
+                    var promise = saveMeta(pic, meta)
+
+                    if (process.env.OPTIMIZE == 1)
+                        promise = promise.then(optimize(saveas))
+
+                    promise = promise.then(shasum(saveas))
+                    resolve(promise)
                 })
             })
         })
