@@ -10,7 +10,10 @@
         <div class=column2>
             <ul class=tags>
                 {% for tag in options.tags %}
-                <li><a href='./{{ tag.uri }}'>{{ tag.name }}</a></li>
+                <li>
+                    <a href='./{{ tag.uri }}'>{{ tag.name }}</a>
+                    <span class=weight>{{ tag.weight }}</span>
+                </li>
                 {% endfor %}
             </ul>
         </div>
@@ -20,7 +23,7 @@
 
             <div class=container>
                 {% for pic in pics %}
-                <div class=pic style='background-image:url({{ pic }})'></div>
+                <div class=pic style='background-image:url({{ pic.pre }})' data-lnk='{{ pic.lnk }}'></div>
                 {% endfor %}
             </div>
 
@@ -50,5 +53,8 @@
                 </svg>
             </div>
         </div>
+
+        <script src='./jquery.min.js'></script>
+        <script src='./app.js'></script>
     </body>
 </html>

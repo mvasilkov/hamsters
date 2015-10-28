@@ -27,9 +27,13 @@ function pageFileTag(name, n) {
 }
 
 function htmlpreview(pic) {
+    var picture = pic.picture
     var name = pic._id + '.png'
     var dir = util.bnodir(name)
-    return './media/pre/' + dir + '/' + name
+    return {
+        lnk: util.bnodir(picture) + '/' + picture,
+        pre: './media/pre/' + dir + '/' + name,
+    }
 }
 
 function buildIndexTags(metadata) {
@@ -89,8 +93,16 @@ function writePages() {
         })
 
         var indexTags = buildIndexTags(metadata)
-        var tags = Object.keys(indexTags).map(function (name) {
-            return {name: name, uri: permalink(name, '_') + '.html'}
+        var tags = Object.keys(indexTags)
+        .sort(function (a, b) {
+            return a.localeCompare(b)
+        })
+        .map(function (name) {
+            return {
+                name: name,
+                uri: permalink(name, '_') + '.html',
+                weight: indexTags[name].length,
+            }
         })
 
         _writePages(pictures, 'index.html', {tags: tags}, pageFile)
