@@ -6,6 +6,7 @@ htdocs:
 	ln -f template/app.{css,js} htdocs
 	ln -f template/view.html htdocs
 	ln -f node_modules/jquery/dist/jquery.min.{js,map} htdocs
+	ln -f node_modules/permalink/permalink.js htdocs
 	touch htdocs
 
 clean:

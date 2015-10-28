@@ -23,7 +23,8 @@
 
             <div class=container>
                 {% for pic in pics %}
-                <div class=pic style='background-image:url({{ pic.pre }})' data-lnk='{{ pic.lnk }}'></div>
+                <div class=pic style='background-image:url({{ pic.pre }})'
+                    data-lnk='{{ pic.lnk }}' data-tags='{{ pic.tags }}'></div>
                 {% endfor %}
             </div>
 

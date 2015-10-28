@@ -30,9 +30,16 @@ function htmlpreview(pic) {
     var picture = pic.picture
     var name = pic._id + '.png'
     var dir = util.bnodir(name)
+    var tags = pic.tags
+    .sort(function (a, b) {
+        return a.localeCompare(b)
+    })
+    .join(':')
+
     return {
         lnk: util.bnodir(picture) + '/' + picture,
         pre: './media/pre/' + dir + '/' + name,
+        tags: tags,
     }
 }
 
