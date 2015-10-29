@@ -21,7 +21,6 @@ function index_main() {
 }
 
 function view_main() {
-    var permalink = urlfmt /* TODO */
     var pic = location.hash.substr(1)
     $('<img>', {
         'class': 'view',

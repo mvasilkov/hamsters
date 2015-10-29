@@ -351,6 +351,7 @@ function savePictures(pictures) {
                 promise = promise
                 .then(wait(2))
                 .then(save1Picture(pic))
+                .catch(function () {})
             })
 
             return promise
