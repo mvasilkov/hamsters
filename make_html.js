@@ -16,7 +16,7 @@ delete Object.prototype.getCI
 var savedir = util.savedir
 var metafile = util.metafile
 var htdocs = _path.join(__dirname, 'htdocs')
-var pagesize = 9
+var pagesize = 12
 
 function pageFile(n) {
     return n? 'index_' + n + '.html': 'index.html'
@@ -60,6 +60,15 @@ function buildIndexTags(metadata) {
     })
 
     return index
+}
+
+function renderView(options) {
+    var html = nunjucks.render('view.html', {
+        options: options,
+    })
+    var name = _path.join(htdocs, 'view.html')
+    console.log('writing', name)
+    fs.writeFileSync(name, html, {encoding: 'utf8'})
 }
 
 function _writePages(pictures, template, options, pageFile) {
@@ -126,6 +135,8 @@ function writePages() {
             _writePages(pictures, 'index_tag.html', {name: name, tags: tags},
                         pageFileTag.bind(null, name))
         })
+
+        renderView({tags: tags})
 
         return Promise.resolve(1)
     }

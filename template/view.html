@@ -8,7 +8,14 @@
     </head>
     <body>
         <div class=column2>
-            <ul class=tags></ul>
+            <ul class=tags>
+                {% for tag in options.tags %}
+                <li>
+                    <a href='./{{ tag.uri }}'>{{ tag.name }}</a>
+                    <span class=weight>{{ tag.weight }}</span>
+                </li>
+                {% endfor %}
+            </ul>
         </div>
 
         <div class=column1>

@@ -33,13 +33,12 @@ function view_main() {
 
     var tags = localStorage.getItem(pic)
     if (typeof tags == 'string') {
+        var unusedTags = $('.tags li')
         tags.split(':').forEach(function (name) {
-            $('<a>', {
-                href: './' + permalink(name, '_') + '.html',
-                text: name,
-            })
-            .appendTo($('<li>').appendTo('.tags'))
+            var uri = './' + permalink(name, '_') + '.html'
+            unusedTags = unusedTags.not(unusedTags.filter(':has([href=\'' + uri + '\'])'))
         })
+        unusedTags.remove()
     }
 }
 
