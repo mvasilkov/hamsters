@@ -58,10 +58,13 @@ ul.tags {
 }
 
 img.view {
+    max-height: calc(100vh - 40px);
     max-width: 100%;
+    vertical-align: bottom;
 }
 
 img.view.zoom {
+    max-height: none;
     max-width: none;
 }
 

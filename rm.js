@@ -13,17 +13,7 @@ function main() {
     assert(arg)
     console.log('-- delete', arg)
 
-    app.readFile('./options.json')
-    .then(function (options) {
-        console.log('-- delete %s from options.illust_ids', arg)
-        options.illust_ids = options.illust_ids.filter(function (x) { x != arg })
-        return options
-    })
-    .then(app.writeFile('./options.json'))
-
-    .then(function () {
-        return app.readFile(util.metafile)
-    })
+    app.readFile(util.metafile)
     .then(function (metadata) {
         console.log('-- delete %s from metafile', arg)
         if (!metadata.hasOwnProperty(arg)) {
@@ -32,6 +22,7 @@ function main() {
         }
 
         saveas = metadata[arg].picture
+        delete metadata[arg]
         return metadata
     })
     .then(app.writeFile(util.metafile))
